@@ -209,6 +209,7 @@ def run(CORES):
                 state = interface.submit_guess(level,current_guess)
                 break
         current_score = state['response']
+
         # multiprocessing - https://www.praetorian.com/blog/multi-core-and-distributed-programming-in-python
         pool = multiprocessing.Pool(processes=CORES)
         divide_S = [list(S)[i::CORES] for i in xrange(CORES)]
@@ -217,7 +218,8 @@ def run(CORES):
         S = S.get(10)
         pool.close()
         pool.join()
-        S = [s for sublist in S for s in sublist]
+        S = [s for sublist in S for s in sublist] # flatten list
+
         print "|S| reduced to " + str(len(S))
         current_guess = best_move(S)
         # print "current_guess: " + str(current_guess)
@@ -227,7 +229,7 @@ def main():
     CORES = 2
     # takes single optional core argument. Default is 2.
     if len(sys.argv) > 0:
-        if '-t' in sys.argv or '--threads' in sys.argv:
+        if '-c' in sys.argv:
             CORES = int(sys.argv[2])
     interface.reset_game()
     run(CORES) # change
